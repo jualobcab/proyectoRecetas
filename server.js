@@ -4,6 +4,7 @@ const cors = require('cors');
 const path = require('path');
 const bodyParser = require('body-parser');
 const db = require('./database'); // Conectar SQLite o PostgreSQL
+const recetas = require('./public/scripts/recetas.js')
 
 const app = express();
 app.use(cors());
@@ -39,17 +40,17 @@ app.get('/recetas', (req, res) => {
     res.sendFile(path.join(__dirname, "public", "principal.html"));
 });
 
-/*
 // Obtener todas las recetas
-app.get('/listRecipes', (req, res) => {
-    db.all('SELECT * FROM recipe', [], (err, rows) => {
+app.get('/api/listRecipes', (req, res) => {
+    recetas.getAllRecipes(db,(err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json(rows);
     });
 });
 
+/*
 // Obtener receta por ID
-app.get('/recipes/:id', (req, res) => {
+app.get('api/recipe/:id', (req, res) => {
     db.get('SELECT * FROM recipe WHERE recipe_id = ?', [req.params.id], (err, row) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json(row);

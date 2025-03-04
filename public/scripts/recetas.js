@@ -1,13 +1,6 @@
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
-
-// Conexión a la base de datos SQLite
-const dbPath = path.join(__dirname, 'recetas.db');  // Ajusta el nombre de tu base de datos si es diferente
-const db = new sqlite3.Database(dbPath);
-
 // Función para recuperar todas las recetas
-function getAllRecipes(callback) {
-    const query = 'SELECT * FROM recetas';
+function getAllRecipes(db, callback) {
+    const query = 'SELECT * FROM recipe';
     db.all(query, [], (err, rows) => {
         if (err) {
             console.error('Error al recuperar las recetas:', err);
@@ -19,7 +12,7 @@ function getAllRecipes(callback) {
 
 // Función para recuperar una receta por ID
 function getRecipeById(id, callback) {
-    const query = 'SELECT * FROM recetas WHERE recipe_id = ?';
+    const query = 'SELECT * FROM recipe WHERE recipe_id = ?';
     db.get(query, [id], (err, row) => {
         if (err) {
             console.error(`Error al recuperar la receta con ID ${id}:`, err);
@@ -32,7 +25,7 @@ function getRecipeById(id, callback) {
 // Función para agregar una nueva receta
 function addRecipe(recipeData, callback) {
     const { recipe_name, cuisine_type, difficulty_level, preparation_time, steps } = recipeData;
-    const query = 'INSERT INTO recetas (recipe_name, cuisine_type, difficulty_level, preparation_time, steps) VALUES (?, ?, ?, ?, ?)';
+    const query = 'INSERT INTO recipe (recipe_name, cuisine_type, difficulty_level, preparation_time, steps) VALUES (?, ?, ?, ?, ?)';
     
     db.run(query, [recipe_name, cuisine_type, difficulty_level, preparation_time, steps], function(err) {
         if (err) {
@@ -45,7 +38,7 @@ function addRecipe(recipeData, callback) {
 
 // Función para eliminar una receta por ID
 function deleteRecipeById(id, callback) {
-    const query = 'DELETE FROM recetas WHERE recipe_id = ?';
+    const query = 'DELETE FROM recipe WHERE recipe_id = ?';
     
     db.run(query, [id], function(err) {
         if (err) {

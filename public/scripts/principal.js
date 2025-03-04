@@ -2,8 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const content = document.getElementById("content");
     const buttons = document.querySelectorAll(".tab-button");
 
-    const recetas = require("./scripts/recetas.js");
-
     // Función para cambiar el contenido según la pestaña seleccionada
     function loadSection(section) {
         content.innerHTML = "";
@@ -69,25 +67,25 @@ document.addEventListener("DOMContentLoaded", () => {
     // Simulación de datos y carga de la tabla
     function fetchRecipes() {
         const tableBody = document.getElementById("recipe-table");
-        const recipes = recetas.getAllRecipes((err, rows) => {
-            if(err){
-                console.error('Error al obtener recetas:', err);
-            }
-            else {
-                tableBody.innerHTML = recipes.map(recipe => `
+        //const recipes = recetas.getAllRecipes((err, rows) => {
+        fetch("/api/listRecipes")
+            .then(response => response.json())
+            .then(rows => {
+            
+                tableBody.innerHTML = rows.map(recipe => `
                     <tr>
-                        <td class="border p-2">${recipe.id}</td>
-                        <td class="border p-2">${recipe.name}</td>
-                        <td class="border p-2">${recipe.type}</td>
-                        <td class="border p-2">${recipe.difficulty}</td>
+                        <td class="border p-2">${recipe.recipe_id}</td>
+                        <td class="border p-2">${recipe.recipe_name}</td>
+                        <td class="border p-2">${recipe.cuisine_type}</td>
+                        <td class="border p-2">${recipe.difficulty_level}</td>
                         <td class="border p-2">
                             <button class="bg-yellow-400 px-2 py-1 rounded" onclick="loadModifyForm(${recipe.id})">✏️</button>
                             <button class="bg-red-500 px-2 py-1 text-white rounded">🗑️</button>
                         </td>
                     </tr>
                 `).join("");
-            }
-        });
+        })
+        .catch(error => console.error("Error al obtener recetas:", error));
     }
 
     // Población del select en modificar

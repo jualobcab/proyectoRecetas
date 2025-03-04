@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <base href="/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recetas App - Inicio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md py-4">
+        <div class="container mx-auto flex justify-between items-center px-6">
+            <h1 class="text-2xl font-bold">Recetas App</h1>
+            <div>
+                <a href="register" class="text-blue-500 hover:text-blue-700 px-4">Registrarse</a>
+                <a href="login" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Iniciar Sesión</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sección Principal -->
+    <div class="container mx-auto text-center py-20">
+        <h2 class="text-4xl font-bold mb-4">Bienvenido a Recetas App</h2>
+        <p class="text-lg text-gray-700 mb-6">Gestiona tus recetas de cocina de manera fácil y rápida.</p>
+        <a href="recetas" class="bg-green-500 text-white px-6 py-3 rounded text-lg font-semibold hover:bg-green-600">
+            Ir a la Aplicación
+        </a>
+    </div>
+
+    <!-- Información del Proyecto -->
+    <div class="bg-white py-10">
+        <div class="container mx-auto text-center">
+            <h3 class="text-2xl font-semibold mb-4">Sobre el Proyecto</h3>
+            <p class="text-gray-700 mb-4">Este proyecto está desarrollado con Node.js, Express, SQLite y TailwindCSS.</p>
+            <p class="text-gray-700 mb-6">Consulta el código fuente en nuestro repositorio:</p>
+            <a href="https://github.com/jualobcab/proyectoRecetas" target="_blank" class="text-blue-500 text-lg font-semibold hover:underline">
+                Ver en GitHub
+            </a>
+        </div>
+    </div>
+
+    <!-- Claves de Acceso (Si hay un usuario admin) -->
+    <div class="container mx-auto text-center py-10">
+        <h3 class="text-xl font-semibold">Acceso de Administrador</h3>
+        <p class="text-gray-700">Usuario: <span class="font-bold">admin</span></p>
+        <p class="text-gray-700">Contraseña: <span class="font-bold">123456</span></p>
+    </div>
+
+</body>
+</html>

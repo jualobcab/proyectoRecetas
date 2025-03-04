@@ -1,15 +1,47 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const bodyParser = require('body-parser');
-const db = require('database.js'); // Conectar SQLite o PostgreSQL
+const db = require('./database'); // Conectar SQLite o PostgreSQL
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+app.use(express.static(path.join(__dirname, "public")));
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+app.get('/index', (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+// Login y Register
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "login.html"));
+});
+app.post('/login', (req, res) => {
+    res.redirect('/recetas');
+    //res.sendFile(path.join(__dirname, "public", "login.html"));
+});
+app.get('/register', (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "register.html"));
+});
+app.post('/register', (req, res) => {
+    res.redirect('/recetas');
+    //res.sendFile(path.join(__dirname, "public", "register.html"));
+});
+
+// Página principal
+app.get('/recetas', (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "principal.html"));
+});
+
+/*
 // Obtener todas las recetas
-app.get('/recipes', (req, res) => {
+app.get('/listRecipes', (req, res) => {
     db.all('SELECT * FROM recipe', [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json(rows);
@@ -44,5 +76,6 @@ app.delete('/recipes/:id', (req, res) => {
         res.json({ message: 'Receta eliminada' });
     });
 });
+*/
 
 app.listen(3000, () => console.log('Servidor en http://localhost:3000'));

@@ -15,18 +15,20 @@
     </header>
     
     <!-- Main Section -->
-    <main class="container mx-auto mt-5 p-5 bg-white rounded shadow">
-        <!-- Nav -->
-        <nav class="flex space-x-4 border-b-2 pb-2 mb-4">
-            <button class="tab-button bg-blue-400 text-white px-4 py-2 rounded" data-section="lista">Lista</button>
-            <button class="tab-button bg-green-400 text-white px-4 py-2 rounded" data-section="añadir">Añadir</button>
-            <button class="tab-button bg-yellow-400 text-white px-4 py-2 rounded" data-section="modificar">Modificar</button>
-        </nav>
+    <main class="container mx-auto mt-5 p-5 bg-white rounded shadow" id="main">
+        <div>
+            <!-- Nav -->
+            <nav class="flex space-x-4 border-b-2 pb-2 mb-4">
+                <button class="tab-button bg-blue-400 text-white px-4 py-2 rounded" data-section="lista">Lista</button>
+                <button class="tab-button bg-green-400 text-white px-4 py-2 rounded" data-section="añadir">Añadir</button>
+                <button class="tab-button bg-yellow-400 text-white px-4 py-2 rounded" data-section="modificar">Modificar</button>
+            </nav>
 
-        <!-- Contenido dinámico -->
-        <section id="content">
-            <!-- Aquí se insertará la tabla o los formularios dinámicamente -->
-        </section>
+            <!-- Contenido dinámico -->
+            <section id="content">
+                <!-- Aquí se insertará la tabla o los formularios dinámicamente -->
+            </section>
+        </div>
     </main>
     
     <script src="scripts/principal.js" defer type="module"></script>

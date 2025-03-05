@@ -6,6 +6,8 @@ const bodyParser = require('body-parser');
 const db = require('./database'); // Conectar SQLite o PostgreSQL
 const recetas = require('./public/scripts/recetas.js')
 
+const bcrypt = require('bcryptjs')
+
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());

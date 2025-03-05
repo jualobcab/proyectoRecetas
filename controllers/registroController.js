@@ -11,25 +11,26 @@ exports.getView = (req, res) => {
 };
 
 exports.postRegistro = async (req, res) => {
-  const { username, password } = req.body;
+  const { username, email, password } = req.body;
 
   try {
-    // Verificar si el usuario ya existe
-    const existingUser = await User.findOne({ where: { username } });
-    if (existingUser) {
-      return res.send("Este usuario ya está registrado.");
+    // Verificar si el correo ya está registrado
+    const existingEmail = await User.findOne({ where: { email } });
+    if (existingEmail) {
+      return res.json({ success: false, message: "Este correo ya está registrado." });
     }
 
+   
     // Hashear la contraseña antes de guardarla en la base de datos
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Crear el usuario
-    await User.create({ username, password: hashedPassword });
+    await User.create({ username, email, password: hashedPassword });
     req.session.user = username;
 
-    return res.redirect("/principal");
+    return res.json({ success: true, message: "Registro exitoso, redirigiendo..." });
   } catch (error) {
     console.error("Error en el registro:", error);
-    res.status(500).send("Error en el servidor");
+    return res.status(500).json({ success: false, message: "Error en el servidor." });
   }
 };

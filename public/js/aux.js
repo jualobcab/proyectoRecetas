@@ -5,28 +5,67 @@ function showDialog(message) {
     existingDialog.remove();
   }
 
-  // Crear el elemento <dialog>
-  const dialog = document.createElement("dialog");
-  dialog.id = "customDialog";
+  // Crear el contenedor del fondo (overlay)
+  const dialogBackdrop = document.createElement("div");
+  dialogBackdrop.id = "customDialogBackdrop";
+  dialogBackdrop.classList.add(
+    "fixed", 
+    "top-0", 
+    "left-0", 
+    "w-full", 
+    "h-full", 
+    "bg-gray-800", 
+    "bg-opacity-50", 
+    "flex", 
+    "items-center", 
+    "justify-center", 
+    "z-50"
+  );
 
-  // Agregar contenido
-  dialog.innerHTML = `
-      <p>${message}</p>
-      <button id="closeDialog">Cerrar</button>
-    `;
+  // Crear el cuadro de diálogo
+  const dialogBox = document.createElement("div");
+  dialogBox.classList.add("bg-white", "p-6", "rounded-lg", "shadow-lg", "w-96", "text-center");
 
-  // Agregar el diálogo al documento
-  document.body.appendChild(dialog);
+  // Agregar el mensaje al cuadro de diálogo
+  const messageText = document.createElement("p");
+  messageText.classList.add("text-lg", "font-semibold", "text-gray-700", "mb-4");
+  messageText.textContent = message;
 
-  // Mostrar el diálogo
-  dialog.showModal();
+  // Crear el botón de cerrar
+  const closeButton = document.createElement("button");
+  closeButton.id = "closeDialog";
+  closeButton.classList.add(
+    "bg-blue-500", 
+    "text-white", 
+    "px-6", 
+    "py-2", 
+    "rounded-md", 
+    "hover:bg-blue-600", 
+    "focus:outline-none", 
+    "focus:ring-2", 
+    "focus:ring-blue-300"
+  );
+  closeButton.textContent = "Cerrar";
 
-  // Evento para cerrar el diálogo
-  document.getElementById("closeDialog").addEventListener("click", () => {
-    dialog.close();
-    dialog.remove(); // Eliminar el diálogo del DOM después de cerrarlo
+  // Agregar el mensaje y el botón al cuadro de diálogo
+  dialogBox.appendChild(messageText);
+  dialogBox.appendChild(closeButton);
+
+  // Agregar el cuadro de diálogo al contenedor del fondo
+  dialogBackdrop.appendChild(dialogBox);
+
+  // Agregar el contenedor al body
+  document.body.appendChild(dialogBackdrop);
+
+  // Mostrar el diálogo (no es estrictamente necesario, pero así lo tenemos claro)
+  dialogBackdrop.style.display = "flex";
+
+  // Evento para cerrar el diálogo cuando se hace clic en el botón
+  closeButton.addEventListener("click", () => {
+    dialogBackdrop.remove(); // Eliminar el diálogo del DOM después de cerrarlo
   });
 }
+
 
 function validarCrearReceta() {
   limpiarErrores();
@@ -111,4 +150,13 @@ function limpiarErrores() {
   document
     .querySelectorAll(".error-message")
     .forEach((error) => error.remove());
+}
+
+function clearContent() {
+  const contentContainer = document.getElementById("content");
+  
+  // Eliminar todos los elementos hijos dentro de #content
+  while (contentContainer.firstChild) {
+    contentContainer.removeChild(contentContainer.firstChild);
+  }
 }

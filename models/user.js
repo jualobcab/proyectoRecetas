@@ -6,7 +6,12 @@ const User = sequelize.define('User', {
   username: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true
+    unique: false // Permitir que el username se repita
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true // El correo debe ser único
   },
   password: {
     type: DataTypes.STRING,

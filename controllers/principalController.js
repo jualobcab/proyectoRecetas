@@ -7,3 +7,12 @@ exports.getView = (req, res) => {
     return res.redirect("/login");
   }
 };
+
+
+exports.getIndex = (req, res) => {
+  if (req.session.user) {
+    res.sendFile(path.join(__dirname, "../views/index.html"));
+  } else {
+    return res.redirect("/login");
+  }
+};

@@ -8,8 +8,8 @@ function validateUsername(username) {
 
 // Validar Contraseña
 function validatePassword(password) {
-    if (!password || password.length < 6) {
-        return "La contraseña no puede estar vacía y debe tener al menos 6 caracteres.";
+    if (!password || password.length < 4) {
+        return "La contraseña no puede estar vacía y debe tener al menos 4 caracteres.";
     }
     return "";
 }

@@ -3,9 +3,9 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const bodyParser = require('body-parser');
-const sessions = require('express-session');
 const db = require('./database'); // Conectar SQLite o PostgreSQL
 const recetas = require('./public/scripts/recetas.js');
+const sesiones = require('./public/scripts/sesiones.js');
 const bcrypt = require('bcryptjs');
 
 const app = express();
@@ -27,18 +27,26 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, "public", "login.html"));
 });
 app.post('/login', (req, res) => {
-    res.redirect('/recetas');
-    //res.sendFile(path.join(__dirname, "public", "login.html"));
+    const { username, password } = req.body;
+
+    sesiones.findUser(db, username, password, (err, user) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (!user) return res.status(404).json({ error: 'Usuario no encontrado o contraseña incorrecta' });
+        res.json({ message: 'Usuario encontrado', user });
+    });
 });
 app.get('/register', (req, res) => {
     res.sendFile(path.join(__dirname, "public", "register.html"));
 });
 app.post('/register', (req, res) => {
-    res.redirect('/recetas');
-    //res.sendFile(path.join(__dirname, "public", "register.html"));
+    sesiones.registerUser(db, req.body, (err, user) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (!user) return res.status(404).json({ error: 'Usuario no creado' });
+        res.json({ message: 'Usuario creado', user });
+    });
 });
 app.get('/logout', (req, res) => {
-    
+
 });
 
 // Página principal
@@ -83,8 +91,6 @@ app.delete('/api/deleteRecipe/:id', (req, res) => {
         res.json(resJSON);
     })
 });
-
-
 
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, "public", "404.html"));

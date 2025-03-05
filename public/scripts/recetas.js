@@ -11,7 +11,7 @@ function getAllRecipes(db, callback) {
 }
 
 // Función para recuperar una receta por ID
-function getRecipeById(id, callback) {
+function getRecipeById(db, id, callback) {
     const query = 'SELECT * FROM recipe WHERE recipe_id = ?';
     db.get(query, [id], (err, row) => {
         if (err) {
@@ -23,7 +23,7 @@ function getRecipeById(id, callback) {
 }
 
 // Función para agregar una nueva receta
-function addRecipe(recipeData, callback) {
+function addRecipe(db, recipeData, callback) {
     const { recipe_name, cuisine_type, difficulty_level, preparation_time, steps } = recipeData;
     const query = 'INSERT INTO recipe (recipe_name, cuisine_type, difficulty_level, preparation_time, steps) VALUES (?, ?, ?, ?, ?)';
     
@@ -37,7 +37,7 @@ function addRecipe(recipeData, callback) {
 }
 
 // Función para eliminar una receta por ID
-function deleteRecipeById(id, callback) {
+function deleteRecipeById(db, id, callback) {
     const query = 'DELETE FROM recipe WHERE recipe_id = ?';
     
     db.run(query, [id], function(err) {

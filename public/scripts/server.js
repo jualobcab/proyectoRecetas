@@ -50,17 +50,17 @@ app.get('/api/listRecipes', (req, res) => {
     });
 });
 
+/*
 // Obtener receta por ID
-app.get('/api/recipe/:id', (req, res) => {
-    recetas.getRecipeById(db, req.params.id, (err, row) => {
+app.get('api/recipe/:id', (req, res) => {
+    db.get('SELECT * FROM recipe WHERE recipe_id = ?', [req.params.id], (err, row) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json(row);
     });
 });
 
-/*
 // Agregar receta
-app.post('/api/addRecipe', (req, res) => {
+app.post('/recipes', (req, res) => {
     const { recipe_name, cuisine_type, difficulty_level, preparation_time, steps } = req.body;
     db.run(`INSERT INTO recipe (recipe_name, cuisine_type, difficulty_level, preparation_time, steps) 
             VALUES (?, ?, ?, ?, ?)`,
@@ -72,7 +72,6 @@ app.post('/api/addRecipe', (req, res) => {
     );
 });
 
-/*
 // Eliminar receta
 app.delete('/recipes/:id', (req, res) => {
     db.run('DELETE FROM recipe WHERE recipe_id = ?', [req.params.id], function (err) {

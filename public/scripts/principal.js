@@ -1,10 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const mainContent = document.getElementById("main");
     const content = document.getElementById("content");
     const buttons = document.querySelectorAll(".tab-button");
 
     // Función para cambiar el contenido según la pestaña seleccionada
     function loadSection(section) {
-        content.innerHTML = "";
+        content.replaceChildren();
         buttons.forEach(btn => btn.classList.remove("bg-opacity-50"));
         document.querySelector(`[data-section='${section}']`).classList.add("bg-opacity-50");
 
@@ -20,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Función para cargar la tabla con las recetas
     function loadTable() {
         // Limpiar el contenido actual
-        content.innerHTML = '';
+        content.replaceChildren();
     
         // Crear la tabla
         const table = document.createElement('table');
@@ -58,11 +59,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Función para cargar el formulario de añadir receta
     function loadAddForm() {
-        // Limpiar el contenido antes de agregar el formulario
-        content.replaceChildren();
+        let formularios = document.getElementById("formularios");
+
+        if (formularios) {
+            // Limpiar el contenido antes de agregar el formulario
+            formularios.replaceChildren();
+        }
+        else {
+            // En caso de no existir lo crea
+            let div = document.createElement("div");
+            div.id = "formularios";
+        }
     
         // Crear el formulario
         const form = document.createElement("form");
+        form.action = "/api/addRecipe";
+        form.method = "POST";
         form.id = "add-form";
         form.className = "space-y-4";
     
@@ -145,18 +157,123 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Función para cargar el formulario de modificar receta
-    function loadModifyForm() {
-        content.innerHTML = `
-            <form id="modify-form" class="space-y-4">
-                <select id="recipe-id" class="w-full p-2 border rounded">
-                    <option value="">Selecciona una receta</option>
-                </select>
-                <input type="text" id="new-name" placeholder="Nuevo nombre" class="w-full p-2 border rounded">
-                <button type="submit" class="bg-yellow-500 text-white px-4 py-2 rounded">Modificar</button>
-            </form>
-        `;
+    function loadModifyForm(recipe_id) {
+        // Limpiar el contenido actual
+        content.innerHTML = '';
+    
+        // Crear el formulario
+        const form = document.createElement('form');
+        form.id = 'modify-form';
+        form.className = 'space-y-4';
+    
+        // Función auxiliar para crear un campo con label
+        function createInputField(labelText, inputType, inputId, placeholder) {
+            const wrapper = document.createElement('div');
+    
+            const label = document.createElement('label');
+            label.setAttribute('for', inputId);
+            label.textContent = labelText;
+            label.className = 'block font-medium';
+    
+            const input = document.createElement('input');
+            input.type = inputType;
+            input.id = inputId;
+            input.placeholder = placeholder;
+            input.className = 'w-full p-2 border rounded';
+    
+            wrapper.appendChild(label);
+            wrapper.appendChild(input);
+    
+            return wrapper;
+        }
+    
+        // Selección de receta
+        const selectWrapper = document.createElement('div');
+    
+        const selectLabel = document.createElement('label');
+        selectLabel.textContent = 'Selecciona una receta a modificar';
+        selectLabel.className = 'block font-medium';
+    
+        const select = document.createElement('select');
+        select.id = 'recipe-id';
+        select.className = 'w-full p-2 border rounded';
+    
+        // Opción por defecto
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Selecciona una receta';
+        select.appendChild(defaultOption);
+    
+        selectWrapper.appendChild(selectLabel);
+        selectWrapper.appendChild(select);
+        form.appendChild(selectWrapper);
+    
+        // Campos del formulario
+        form.appendChild(createInputField('Nombre de la receta', 'text', 'recipe-name', 'Ej: Ensalada César'));
+        form.appendChild(createInputField('Tipo de cocina', 'text', 'cuisine-type', 'Ej: Italiana, Mexicana'));
+        form.appendChild(createInputField('Tiempo de preparación (minutos)', 'number', 'preparation-time', 'Ej: 30'));
+    
+        // Campo: Dificultad (Select)
+        const difficultyWrapper = document.createElement('div');
+    
+        const difficultyLabel = document.createElement('label');
+        difficultyLabel.textContent = 'Dificultad';
+        difficultyLabel.className = 'block font-medium';
+    
+        const difficultySelect = document.createElement('select');
+        difficultySelect.id = 'difficulty';
+        difficultySelect.className = 'w-full p-2 border rounded';
+    
+        // Opciones de dificultad (1 a 5)
+        for (let i = 1; i <= 5; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = `Dificultad ${i}`;
+            difficultySelect.appendChild(option);
+        }
+    
+        difficultyWrapper.appendChild(difficultyLabel);
+        difficultyWrapper.appendChild(difficultySelect);
+        form.appendChild(difficultyWrapper);
+    
+        // Campo: Pasos de preparación
+        const stepsWrapper = document.createElement('div');
+        const stepsLabel = document.createElement('label');
+        stepsLabel.setAttribute('for', 'recipe-steps');
+        stepsLabel.textContent = 'Pasos de preparación';
+        stepsLabel.className = 'block font-medium';
+    
+        const stepsTextarea = document.createElement('textarea');
+        stepsTextarea.id = 'recipe-steps';
+        stepsTextarea.placeholder = 'Describe los pasos de la receta...';
+        stepsTextarea.className = 'w-full p-2 border rounded';
+        stepsTextarea.rows = 4;
+    
+        stepsWrapper.appendChild(stepsLabel);
+        stepsWrapper.appendChild(stepsTextarea);
+        form.appendChild(stepsWrapper);
+    
+        // Botón de modificar
+        const submitButton = document.createElement('button');
+        submitButton.type = 'submit';
+        submitButton.className = 'bg-yellow-500 text-white px-4 py-2 rounded';
+        submitButton.textContent = 'Modificar';
+    
+        form.appendChild(submitButton);
+    
+        // Agregar el formulario al contenido
+        content.appendChild(form);
+    
+        // Llamar a la función para poblar el select con las recetas disponibles
         populateRecipeSelect();
-    }
+
+        if(typeof recipe_id !== "undefined" && recipe_id!==null){
+            const selectedId = recipe_id;
+    
+            loadRecipeData(selectedId);
+        }
+    }    
+    
 
     // Simulación de datos y carga de la tabla
     function fetchRecipes() {
@@ -203,7 +320,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     const modifyBtn = document.createElement("button");
                     modifyBtn.className = "bg-yellow-400 px-2 py-1 rounded";
                     modifyBtn.textContent = "✏️";
-                    modifyBtn.onclick = () => loadModifyForm(recipe.id);
+                    modifyBtn.addEventListener("click", () => {
+                        loadModifyForm(recipe.recipe_id);
+                    });
     
                     // Botón de Eliminar 🗑️
                     const deleteBtn = document.createElement("button");
@@ -222,13 +341,56 @@ document.addEventListener("DOMContentLoaded", () => {
             .catch(error => console.error("Error al obtener recetas:", error));
     }    
 
-    // Población del select en modificar   HACE FALTA QUE EN VEZ DE ESTO COJA TODOS LOS NOMBRES DE RECETAS O ID'S
+    // Población del select en modificar
     function populateRecipeSelect() {
         const select = document.getElementById("recipe-id");
-        select.innerHTML += `
-            <option value="1">Pasta Carbonara</option>
-            <option value="2">Tacos al Pastor</option>
-        `;
+    
+        // Limpiar el select antes de agregar opciones
+        select.innerHTML = '<option value="" hidden>Selecciona una receta</option>';
+    
+        // Obtener las recetas desde la API
+        fetch('/api/listRecipes')
+            .then(response => response.json())
+            .then(recipes => {
+                recipes.forEach(recipe => {
+                    const option = document.createElement("option");
+                    option.value = recipe.recipe_id;
+                    option.textContent = recipe.recipe_name;
+                    select.appendChild(option);
+                });
+            })
+            .catch(error => console.error("Error al cargar recetas:", error));
+    
+        // Evento para detectar cambios en la selección
+        select.addEventListener("change", function () {
+            const selectedId = select.value;
+    
+            loadRecipeData(selectedId);
+        });
+    } 
+    
+    function loadRecipeData(selectedId) {
+        if (selectedId) {
+            // Obtener los datos de la receta seleccionada desde la API
+            fetch(`/api/recipe/${selectedId}`)
+                .then(response => response.json())
+                .then(recipe => {
+                    document.getElementById("recipe-id").value = selectedId;
+                    document.getElementById("recipe-name").value = recipe.recipe_name;
+                    document.getElementById("cuisine-type").value = recipe.cuisine_type;
+                    document.getElementById("preparation-time").value = recipe.preparation_time.split(" ")[0];
+                    document.getElementById("difficulty").value = recipe.difficulty_level;
+                    document.getElementById("recipe-steps").value = recipe.steps;
+                })
+                .catch(error => console.error("Error al obtener la receta:", error));
+        } else {
+            // Limpiar los campos si no hay receta seleccionada
+            document.getElementById("recipe-name").value = "";
+            document.getElementById("cuisine-type").value = "";
+            document.getElementById("preparation-time").value = "";
+            document.getElementById("difficulty").value = "1"; // Valor por defecto
+            document.getElementById("recipe-steps").value = "";
+        }
     }
 
     // Manejo de botones

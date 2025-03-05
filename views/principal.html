@@ -4,9 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Principal</title>
-    <link rel="stylesheet" href="/css/style.css" />
+
+    <script src="js/aux.js" defer></script>
     <script src="js/recipeForm.js" defer></script>
     <script src="js/recipeList.js" defer></script>
+    <script src="js/recipeEdit.js" defer></script>
   </head>
   <body>
     <h1>Principal</h1>
@@ -19,9 +21,8 @@
 
     <!-- Contenido -->
     <div id="content">
-
       <!-- Formulario para agregar receta (inicialmente oculto) -->
-      <div id="recipeForm" style="display:none;">
+      <div id="recipeForm" style="display: none">
         <h2>Agregar receta</h2>
         <form id="recipeForm">
           <label for="recipe_name">Nombre de la receta:</label><br />
@@ -29,7 +30,7 @@
             type="text"
             id="recipe_name"
             name="recipe_name"
-            required
+         
           /><br /><br />
 
           <label for="cuisine_type">Tipo de cocina:</label><br />
@@ -37,7 +38,6 @@
             type="text"
             id="cuisine_type"
             name="cuisine_type"
-            required
           /><br /><br />
 
           <label for="difficulty_level">Nivel de dificultad (1-5):</label><br />
@@ -50,28 +50,91 @@
             required
           /><br /><br />
 
-          <label for="preparation_time">Tiempo de preparación (minutos):</label><br />
+          <label for="preparation_time">Tiempo de preparación (minutos):</label
+          ><br />
           <input
             type="number"
             id="preparation_time"
             name="preparation_time"
-            required
           /><br /><br />
 
           <label for="steps">Pasos de la receta:</label><br />
-          <textarea id="steps" name="steps" rows="4" cols="50" required></textarea><br /><br />
+          <textarea
+            id="steps"
+            name="steps"
+            rows="4"
+            cols="50"
+            required
+          ></textarea
+          ><br /><br />
 
-          <button type="button" id="clearButton">Limpiar campos</button>
+          <button type="button" id="clearCrearButton">Limpiar campos</button>
           <button type="submit">Añadir receta</button>
         </form>
       </div>
 
-      <!-- Contenedor para mostrar el listado de recetas (inicialmente oculto) -->
-      <div id="listadoRecetas" style="display:none;">
-        <h2>Listado de Recetas</h2>
-        
+      <!-- Formulario para editar receta (inicialmente oculto) -->
+
+      <div id="recipeEdit" style="display: none">
+        <h2>Editar Receta</h2>
+        <form id="editRecipeForm">
+          <!-- Campo oculto para almacenar el ID de la receta -->
+          <input type="hidden" id="edit_recipe_id" name="edit_recipe_id" />
+
+          <label for="edit_recipe_name">Nombre de la receta:</label><br />
+          <input
+            type="text"
+            id="edit_recipe_name"
+            name="edit_recipe_name"
+            required
+          /><br /><br />
+
+          <label for="edit_cuisine_type">Tipo de cocina:</label><br />
+          <input
+            type="text"
+            id="edit_cuisine_type"
+            name="edit_cuisine_type"
+          /><br /><br />
+
+          <label for="edit_difficulty_level">Nivel de dificultad (1-5):</label
+          ><br />
+          <input
+            type="number"
+            id="edit_difficulty_level"
+            name="edit_difficulty_level"
+            min="1"
+            max="5"
+            required
+          /><br /><br />
+
+          <label for="edit_preparation_time"
+            >Tiempo de preparación (minutos):</label
+          ><br />
+          <input
+            type="number"
+            id="edit_preparation_time"
+            name="edit_preparation_time"
+          /><br /><br />
+
+          <label for="edit_steps">Pasos de la receta:</label><br />
+          <textarea
+            id="edit_steps"
+            name="edit_steps"
+            rows="4"
+            cols="50"
+            required
+          ></textarea
+          ><br /><br />
+
+          <button type="button" id="clearEditButton">Limpiar campos</button>
+          <button type="submit">Guardar cambios</button>
+        </form>
       </div>
 
+      <!-- Contenedor para mostrar el listado de recetas (inicialmente oculto) -->
+      <div id="listadoRecetas" style="display: none">
+        <h2>Listado de Recetas</h2>
+      </div>
     </div>
   </body>
 </html>

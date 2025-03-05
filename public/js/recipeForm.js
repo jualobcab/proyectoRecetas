@@ -1,7 +1,12 @@
+
 document
   .getElementById("recipeForm")
   .addEventListener("submit", async (event) => {
     event.preventDefault();
+
+    if (!validarCrearReceta()) {
+      return; 
+    }
 
     const recipeData = {
       recipe_name: document.getElementById("recipe_name").value,
@@ -22,33 +27,38 @@ document
 
       const data = await response.json();
       if (response.ok) {
-        limpiarCampos();
-        alert("Receta agregada exitosamente");
+        limpiarCrearCampos();
+        document.getElementById("btnlistado").click();
+        showDialog("Receta agregada exitosamente");
+    
       } else {
         alert("Error: " + data.message);
       }
     } catch (error) {
       console.error("Error al enviar la receta:", error);
-      alert("Hubo un problema con la solicitud.");
+      showDialog("Hubo un problema con la solicitud");
+   
     }
   });
 
 document.getElementById("btnAgregar").addEventListener("click", function () {
   const listadoRecetas = document.getElementById("listadoRecetas");
-  const recipeForm = document.getElementById("recipeForm");
+  const form = document.getElementById("recipeForm");
+  const edit = document.getElementById("recipeEdit");
+  edit.style.display = "none";
   listadoRecetas.style.display = "none";
-  recipeForm.style.display= "block";
+  form.style.display= "block";
 
 });
 
-document.getElementById('clearButton').addEventListener('click', limpiarCampos);
+document.getElementById('clearCrearButton').addEventListener('click', limpiarCrearCampos);
 
-function limpiarCampos() {
+function limpiarCrearCampos() {
     // Limpiar los valores de los campos del formulario
-    console.log("a");
     document.getElementById('recipe_name').value = '';
     document.getElementById('cuisine_type').value = '';
     document.getElementById('difficulty_level').value = '';
     document.getElementById('preparation_time').value = '';
     document.getElementById('steps').value = '';
 }
+

@@ -1,5 +1,9 @@
+
+
+
 document.getElementById("btnlistado").addEventListener("click", async () => {
   try {
+   
     const response = await fetch("/recipe/list"); // Hacer la petición al servidor
     const recipes = await response.json(); // Convertir la respuesta en JSON
 
@@ -73,15 +77,16 @@ document.getElementById("btnlistado").addEventListener("click", async () => {
           });
 
           if (response.ok) {
-            alert("Receta eliminada exitosamente");
+            showDialog("Receta eliminada exitosamente");
             // Volver a cargar el listado de recetas después de eliminar
             document.getElementById("btnlistado").click();
           } else {
-            alert("Error al eliminar la receta");
+            showDialog("Error al eliminar la receta");
+          
           }
         } catch (error) {
           console.error("Error al eliminar la receta:", error);
-          alert("Hubo un problema al eliminar la receta.");
+          showDialog("Hubo un problema al eliminar la receta");
         }
       });
 
@@ -90,46 +95,13 @@ document.getElementById("btnlistado").addEventListener("click", async () => {
       // Crear el botón de modificar
       const editButton = document.createElement("button");
       editButton.textContent = "Modificar";
-      editButton.addEventListener("click", async () => {
-        try {
-          // Aquí podrías llenar el formulario de modificación con los datos de la receta
-          document.getElementById("recipe_name").value = recipe.recipe_name;
-          document.getElementById("cuisine_type").value = recipe.cuisine_type;
-          document.getElementById("difficulty_level").value = recipe.difficulty_level;
-          document.getElementById("preparation_time").value = recipe.preparation_time;
-          document.getElementById("steps").value = recipe.steps;
-
-          // Cambiar la acción del formulario para actualizar la receta
-          const form = document.getElementById("recipeForm");
-          form.onsubmit = async (event) => {
-            event.preventDefault();
-            const updatedRecipe = {
-              recipe_name: document.getElementById("recipe_name").value,
-              cuisine_type: document.getElementById("cuisine_type").value,
-              difficulty_level: document.getElementById("difficulty_level").value,
-              preparation_time: document.getElementById("preparation_time").value,
-              steps: document.getElementById("steps").value,
-            };
-
-            const response = await fetch(`/recipe/update/${recipe.recipe_id}`, {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(updatedRecipe)
-            });
-
-            if (response.ok) {
-              alert("Receta modificada exitosamente");
-              document.getElementById("btnlistado").click();  // Recargar el listado después de modificar
-            } else {
-              alert("Error al modificar la receta");
-            }
-          };
-        } catch (error) {
-          console.error("Error al cargar receta para modificar:", error);
-        }
-      });
+    
+      editButton.onclick = function () {
+        loadRecipeForEdit(recipe.recipe_id);
+        document.getElementById("listadoRecetas").style.display = "none";
+        document.getElementById("recipeEdit").style.display = "block"; 
+        
+      };
 
       tdActions.appendChild(editButton);
       row.appendChild(tdActions);
@@ -141,6 +113,9 @@ document.getElementById("btnlistado").addEventListener("click", async () => {
     listadoContainer.appendChild(table); // Insertar la tabla en el contenedor
   } catch (error) {
     console.error("Error al obtener las recetas:", error);
-    alert("Hubo un problema al cargar el listado.");
+    showDialog("Hubo un problema al cargar el listado");
+    
   }
 });
+
+document.getElementById("btnlistado").click();

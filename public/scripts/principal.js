@@ -64,6 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // En caso de no existir lo crea
             formularios = document.createElement("div");
             formularios.id = "formularios";
+            formularios.classList = "w-1/3";
         }
     
         // Crear el formulario
@@ -161,6 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // En caso de no existir lo crea
             formularios = document.createElement("div");
             formularios.id = "formularios";
+            formularios.classList = "w-1/3";
         }
     
         // Crear el formulario
@@ -277,7 +279,71 @@ document.addEventListener("DOMContentLoaded", () => {
             loadRecipeData(selectedId);
         }
     }    
+
+    // Pintar la receta dada
+    function paintRecipeData(recipe_id) {
+        // Realiza la solicitud para obtener los datos de la receta
+        fetch(`/api/recipe/${recipe_id}`)
+            .then(response => response.json())
+            .then(recipe => {
+                let formularios = document.getElementById("formularios");
+
+                if (!formularios) {
+                    // En caso de no existir lo crea
+                    formularios = document.createElement("div");
+                    formularios.id = "formularios";
+                    formularios.classList = "w-1/3";
+                }
+
+                const recipeDetails = document.createElement("div");
+                recipeDetails.classList = "p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-md space-y-6";
     
+                // Título de la receta
+                const recipeTitle = document.createElement('h2');
+                recipeTitle.className = 'text-3xl font-semibold text-gray-800';
+                recipeTitle.textContent = recipe.recipe_name; // Asegúrate de que 'name' sea el campo correcto de la receta
+    
+                // Tipo de cocina
+                const recipeCuisine = document.createElement('p');
+                recipeCuisine.className = 'text-lg text-gray-600';
+                recipeCuisine.textContent = `Tipo de cocina: ${recipe.cuisine_type}`;
+    
+                // Tiempo de preparación
+                const preparationTime = document.createElement('p');
+                preparationTime.className = 'text-lg text-gray-600';
+                preparationTime.textContent = `Tiempo de preparación: ${recipe.preparation_time}`;
+    
+                // Dificultad
+                const recipeDifficulty = document.createElement('p');
+                recipeDifficulty.className = 'text-lg text-gray-600';
+                recipeDifficulty.textContent = `Dificultad: ${recipe.difficulty_level}`;
+    
+                // Pasos de preparación
+                const recipeStepsTitle = document.createElement('h3');
+                recipeStepsTitle.className = 'text-2xl font-semibold text-gray-800';
+                recipeStepsTitle.textContent = 'Pasos de preparación';
+    
+                const recipeSteps = document.createElement('p');
+                recipeSteps.className = 'text-gray-700';
+                recipeSteps.textContent = recipe.steps;
+    
+                // Append the elements to the main recipeDetails div
+                recipeDetails.appendChild(recipeTitle);
+                recipeDetails.appendChild(recipeCuisine);
+                recipeDetails.appendChild(preparationTime);
+                recipeDetails.appendChild(recipeDifficulty);
+                recipeDetails.appendChild(recipeStepsTitle);
+                recipeDetails.appendChild(recipeSteps);
+    
+                // Agregar los detalles al contenido
+                formularios.replaceChildren();
+                formularios.appendChild(recipeDetails);
+                mainContent.prepend(formularios);
+            })
+            .catch(error => {
+                console.error('Error al obtener la receta:', error);
+            });
+    }    
 
     // Simulación de datos y carga de la tabla
     function fetchRecipes() {
@@ -313,6 +379,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     const viewBtn = document.createElement("button");
                     viewBtn.className = "bg-blue-500 px-2 py-1 text-white rounded";
                     viewBtn.textContent = "👁";
+                    viewBtn.addEventListener("click", () => {
+                        paintRecipeData(recipe.recipe_id);
+                    });
                     viewTd.appendChild(viewBtn);
                     row.appendChild(viewTd);
     

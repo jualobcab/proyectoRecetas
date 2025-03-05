@@ -69,8 +69,6 @@ document.addEventListener("DOMContentLoaded", () => {
     
         // Crear el formulario
         const form = document.createElement("form");
-        form.action = "/api/addRecipe";
-        form.method = "POST";
         form.id = "add-form";
         form.className = "space-y-4";
     
@@ -145,6 +143,34 @@ document.addEventListener("DOMContentLoaded", () => {
         submitButton.type = "submit";
         submitButton.className = "bg-green-500 text-white px-4 py-2 rounded";
         submitButton.textContent = "Añadir";
+        submitButton.addEventListener("click", (e) => {
+            e.preventDefault();
+
+            let datos = {
+                recipe_name: document.getElementById("recipe-name").value, 
+                cuisine_type: document.getElementById("cuisine-type").value, 
+                difficulty_level: document.getElementById("difficulty").value, 
+                preparation_time: document.getElementById("preparation-time").value, 
+                steps: document.getElementById("recipe-steps").value
+            }
+
+            if (validacionOk()){
+                fetch('/api/addRecipe', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(datos),
+                    })
+                        .then(response => response.json())
+                        .then(respuesta => { 
+                            showToast("Receta " + respuesta.recipe_id + " creada.");
+                            loadTable()
+                        }).catch((err) => {
+                            showAlertToast('Error al crear la receta ' + err.error);
+                        });
+            }
+        });
     
         form.appendChild(submitButton);
     
@@ -211,7 +237,7 @@ document.addEventListener("DOMContentLoaded", () => {
         selectWrapper.appendChild(selectLabel);
         selectWrapper.appendChild(select);
         form.appendChild(selectWrapper);
-    
+
         // Campos del formulario
         form.appendChild(createInputField('Nombre de la receta', 'text', 'recipe-name', 'Ej: Ensalada César'));
         form.appendChild(createInputField('Tipo de cocina', 'text', 'cuisine-type', 'Ej: Italiana, Mexicana'));
@@ -262,6 +288,35 @@ document.addEventListener("DOMContentLoaded", () => {
         submitButton.type = 'submit';
         submitButton.className = 'bg-yellow-500 text-white px-4 py-2 rounded';
         submitButton.textContent = 'Modificar';
+        submitButton.addEventListener("click", (e) => {
+            e.preventDefault();
+
+            let datos = {
+                recipe_id: document.getElementById("recipe-id").value,
+                recipe_name: document.getElementById("recipe-name").value, 
+                cuisine_type: document.getElementById("cuisine-type").value, 
+                difficulty_level: document.getElementById("difficulty").value, 
+                preparation_time: document.getElementById("preparation-time").value, 
+                steps: document.getElementById("recipe-steps").value
+            }
+
+            if (validacionOk()){
+                fetch('/api/modifyRecipe', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(datos),
+                })
+                    .then(response => response.json())
+                    .then(respuesta =>{
+                        showToast(respuesta.message);
+                        loadTable()
+                    }).catch((err) => {
+                        showAlertToast('Error al modificar la receta' + err.error);
+                    });;
+            }
+        });
     
         form.appendChild(submitButton);
     
@@ -277,6 +332,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const selectedId = recipe_id;
     
             loadRecipeData(selectedId);
+        }
+        else {
+            showAlertToast('Receta no encontrada');
         }
     }    
 
@@ -340,8 +398,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 formularios.appendChild(recipeDetails);
                 mainContent.prepend(formularios);
             })
-            .catch(error => {
-                console.error('Error al obtener la receta:', error);
+            .catch(() => {
+                showAlertToast('Error al obtener la receta');
             });
     }    
 
@@ -362,7 +420,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         recipe.recipe_name,
                         recipe.cuisine_type,
                         recipe.difficulty_level,
-                        recipe.preparation_time
+                        recipe.preparation_time+" minutos"
                     ];
     
                     // Crear celdas para los datos de la receta
@@ -401,6 +459,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     const deleteBtn = document.createElement("button");
                     deleteBtn.className = "bg-red-500 px-2 py-1 text-white rounded";
                     deleteBtn.textContent = "🗑️";
+                    deleteBtn.addEventListener("click", () => {
+                        deleteRecipe(recipe.recipe_id);
+                    });
                     
                     // Agregar botones a la celda
                     actionsTd.appendChild(modifyBtn);
@@ -411,7 +472,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     tableBody.appendChild(row);
                 });
             })
-            .catch(error => console.error("Error al obtener recetas:", error));
+            .catch(() => 
+                showAlertToast("Error al obtener recetas")
+            );
     }    
 
     // Población del select en modificar
@@ -432,7 +495,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     select.appendChild(option);
                 });
             })
-            .catch(error => console.error("Error al cargar recetas:", error));
+            .catch(() => 
+                showAlertToast("Error al cargar recetas")
+            );
     
         // Evento para detectar cambios en la selección
         select.addEventListener("change", function () {
@@ -455,7 +520,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     document.getElementById("difficulty").value = recipe.difficulty_level;
                     document.getElementById("recipe-steps").value = recipe.steps;
                 })
-                .catch(error => console.error("Error al obtener la receta:", error));
+                .catch(() => 
+                    showAlertToast("Error al obtener la receta")
+            );
         } else {
             // Limpiar los campos si no hay receta seleccionada
             document.getElementById("recipe-name").value = "";
@@ -478,7 +545,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Manejo del logout
     document.getElementById("logout").addEventListener("click", () => {
-        alert("Cerrando sesión...");
+        showAlertToast("Cerrando sesión...");
         window.location.href = "index.html";
     });
+
+    function deleteRecipe(recipe_id) {
+        fetch('/api/deleteRecipe/'+recipe_id, {
+            method: "DELETE"
+            })
+                .then(response => response.json())
+                .then(respuesta => { 
+                    showToast(respuesta.message);
+                    loadTable()
+                }).catch((err) => {
+                    showAlertToast('Error al borrar la receta ' + err.error);
+                });
+    }
 });
+
+function validacionOk() {
+    let ok = true
+    let mensajeError = "";
+
+    let validarNombreReceta = validateRecipeName(document.getElementById("recipe-name").value);
+    let validarTipo = validateCuisineType(document.getElementById("cuisine-type").value);
+    let validarDificultad = validateDifficulty(document.getElementById("difficulty").value);
+    let validarTiempo = validatePreparationTime(document.getElementById("preparation-time").value);
+    let validarPasos = validateSteps(document.getElementById("recipe-steps").value);
+
+    if (validarNombreReceta !== ""){
+        mensajeError += validarNombreReceta+"\n"
+    }
+    if (validarTipo !== ""){
+        mensajeError += validarTipo+"\n"
+    }
+    if (validarDificultad !== ""){
+        mensajeError += validarDificultad+"\n"
+    }
+    if (validarTiempo !== ""){
+        mensajeError += validarTiempo+"\n"
+    }
+    if (validarPasos !== ""){
+        mensajeError += validarPasos
+    }
+     
+    if (mensajeError != ""){
+        ok = false;
+        showAlertToast(mensajeError);
+    }
+
+    return ok;
+}

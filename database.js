@@ -15,7 +15,7 @@ if (!fs.existsSync(filePath)) {
             recipe_name TEXT NOT NULL,
             cuisine_type TEXT,
             difficulty_level INTEGER NOT NULL CHECK (difficulty_level BETWEEN 1 AND 5),
-            preparation_time TEXT,
+            preparation_time INTEGER,
             steps TEXT NOT NULL
         );`);
 
@@ -32,11 +32,11 @@ if (!fs.existsSync(filePath)) {
 
         db.run(`INSERT INTO recipe (recipe_name, cuisine_type, difficulty_level, preparation_time, steps)
                 VALUES 
-                ('Spaghetti Carbonara', 'Italiana', 2, '20 minutos', 'Paso 1: Cocinar pasta...'),
-                ('Tacos al Pastor', 'Mexicana', 3, '40 minutos', 'Paso 1: Preparar la carne...'),
-                ('Sushi', 'Japonesa', 4, '60 minutos', 'Paso 1: Cocinar arroz...'),
-                ('Ensalada César', 'Internacional', 1, '15 minutos', 'Paso 1: Lavar lechuga...'),
-                ('Paella', 'Española', 5, '90 minutos', 'Paso 1: Preparar sofrito...');`);
+                ('Spaghetti Carbonara', 'Italiana', 2, 20, 'Paso 1: Cocinar pasta...'),
+                ('Tacos al Pastor', 'Mexicana', 3, 40, 'Paso 1: Preparar la carne...'),
+                ('Sushi', 'Japonesa', 4, 60, 'Paso 1: Cocinar arroz...'),
+                ('Ensalada César', 'Internacional', 1, 15, 'Paso 1: Lavar lechuga...'),
+                ('Paella', 'Española', 5, 90, 'Paso 1: Preparar sofrito...');`);
     });
 }
 else {

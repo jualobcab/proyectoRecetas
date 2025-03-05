@@ -3,10 +3,10 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const bodyParser = require('body-parser');
+const sessions = require('express-session');
 const db = require('./database'); // Conectar SQLite o PostgreSQL
-const recetas = require('./public/scripts/recetas.js')
-
-const bcrypt = require('bcryptjs')
+const recetas = require('./public/scripts/recetas.js');
+const bcrypt = require('bcryptjs');
 
 const app = express();
 app.use(cors());
@@ -14,6 +14,7 @@ app.use(bodyParser.json());
 
 app.use(express.static(path.join(__dirname, "public")));
 
+// Pagina principal
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, "public", "index.html"));
 });
@@ -35,6 +36,9 @@ app.get('/register', (req, res) => {
 app.post('/register', (req, res) => {
     res.redirect('/recetas');
     //res.sendFile(path.join(__dirname, "public", "register.html"));
+});
+app.get('/logout', (req, res) => {
+    
 });
 
 // Página principal
@@ -58,28 +62,32 @@ app.get('/api/recipe/:id', (req, res) => {
     });
 });
 
-/*
-// Agregar receta
 app.post('/api/addRecipe', (req, res) => {
-    const { recipe_name, cuisine_type, difficulty_level, preparation_time, steps } = req.body;
-    db.run(`INSERT INTO recipe (recipe_name, cuisine_type, difficulty_level, preparation_time, steps) 
-            VALUES (?, ?, ?, ?, ?)`,
-        [recipe_name, cuisine_type, difficulty_level, preparation_time, steps],
-        function (err) {
-            if (err) return res.status(500).json({ error: err.message });
-            res.json({ recipe_id: this.lastID });
-        }
-    );
-});
-
-/*
-// Eliminar receta
-app.delete('/recipes/:id', (req, res) => {
-    db.run('DELETE FROM recipe WHERE recipe_id = ?', [req.params.id], function (err) {
+    recetas.addRecipe(db, req.body, (err, resJSON) => {
         if (err) return res.status(500).json({ error: err.message });
-        res.json({ message: 'Receta eliminada' });
+        res.json(resJSON);
     });
 });
-*/
+
+app.post('/api/modifyRecipe', (req, res) => {
+    recetas.updateRecipe(db, req.body, (err, resJSON) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(resJSON);
+    });
+});
+
+// Eliminar receta
+app.delete('/api/deleteRecipe/:id', (req, res) => {
+    recetas.deleteRecipeById(db, req.params.id, (err, resJSON) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(resJSON);
+    })
+});
+
+
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "404.html"));
+});
 
 app.listen(3000, () => console.log('Servidor en http://localhost:3000'));

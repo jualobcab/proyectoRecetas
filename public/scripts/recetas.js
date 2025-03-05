@@ -36,6 +36,24 @@ function addRecipe(db, recipeData, callback) {
     });
 }
 
+// Función para modificar una receta
+function updateRecipe(db, recipeData, callback) {
+    const { recipe_id, recipe_name, cuisine_type, difficulty_level, preparation_time, steps } = recipeData;
+    const query = `
+        UPDATE recipe 
+        SET recipe_name = ?, cuisine_type = ?, difficulty_level = ?, preparation_time = ?, steps = ? 
+        WHERE recipe_id = ?
+    `;
+
+    db.run(query, [recipe_name, cuisine_type, difficulty_level, preparation_time, steps, recipe_id], function(err) {
+        if (err) {
+            console.error('Error al actualizar la receta:', err);
+            return callback(err, null);
+        }
+        callback(null, { message: 'Receta actualizada correctamente', changes: this.changes });
+    });
+}
+
 // Función para eliminar una receta por ID
 function deleteRecipeById(db, id, callback) {
     const query = 'DELETE FROM recipe WHERE recipe_id = ?';
@@ -53,5 +71,6 @@ module.exports = {
     getAllRecipes,
     getRecipeById,
     addRecipe,
+    updateRecipe,
     deleteRecipeById
 };

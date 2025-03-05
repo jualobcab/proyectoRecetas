@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Función para cambiar el contenido según la pestaña seleccionada
     function loadSection(section) {
-        content.replaceChildren();
         buttons.forEach(btn => btn.classList.remove("bg-opacity-50"));
         document.querySelector(`[data-section='${section}']`).classList.add("bg-opacity-50");
 
@@ -61,14 +60,10 @@ document.addEventListener("DOMContentLoaded", () => {
     function loadAddForm() {
         let formularios = document.getElementById("formularios");
 
-        if (formularios) {
-            // Limpiar el contenido antes de agregar el formulario
-            formularios.replaceChildren();
-        }
-        else {
+        if (!formularios) {
             // En caso de no existir lo crea
-            let div = document.createElement("div");
-            div.id = "formularios";
+            formularios = document.createElement("div");
+            formularios.id = "formularios";
         }
     
         // Crear el formulario
@@ -153,13 +148,20 @@ document.addEventListener("DOMContentLoaded", () => {
         form.appendChild(submitButton);
     
         // Agregar el formulario al contenido
-        content.appendChild(form);
+        formularios.replaceChildren();
+        formularios.appendChild(form);
+        mainContent.prepend(formularios);
     }
 
     // Función para cargar el formulario de modificar receta
     function loadModifyForm(recipe_id) {
-        // Limpiar el contenido actual
-        content.innerHTML = '';
+        let formularios = document.getElementById("formularios");
+
+        if (!formularios) {
+            // En caso de no existir lo crea
+            formularios = document.createElement("div");
+            formularios.id = "formularios";
+        }
     
         // Crear el formulario
         const form = document.createElement('form');
@@ -262,7 +264,9 @@ document.addEventListener("DOMContentLoaded", () => {
         form.appendChild(submitButton);
     
         // Agregar el formulario al contenido
-        content.appendChild(form);
+        formularios.replaceChildren();
+        formularios.appendChild(form);
+        mainContent.prepend(formularios);
     
         // Llamar a la función para poblar el select con las recetas disponibles
         populateRecipeSelect();

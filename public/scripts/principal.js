@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch(error => console.error("Error al obtener recetas:", error));
     }
 
-    // Población del select en modificar
+    // Población del select en modificar   HACE FALTA QUE EN VEZ DE ESTO COJA TODOS LOS NOMBRES DE RECETAS O ID'S
     function populateRecipeSelect() {
         const select = document.getElementById("recipe-id");
         select.innerHTML += `
